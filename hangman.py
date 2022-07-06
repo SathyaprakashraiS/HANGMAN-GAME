@@ -1,12 +1,14 @@
 import os
 import time
-word="sathya"
+from words import *
+import random
+word="hangman"
 difficulty="EASY"
 instruction=""
 scores=[]
 names=[]
 difficulty=""
-score=0
+score=-100
 menu=True
 diffoption=False
 result=False
@@ -55,8 +57,6 @@ def scoreboard():
 			print(liner)
 def hscorechecker(score):
 	global scores
-	print("here")
-	time.sleep(5)
 	ss=False
 	loc=0
 	for i in range(len(scores)):
@@ -166,7 +166,7 @@ difficulty=diffcheck(difficulty)
 word=word.upper()
 tries=8
 mistakes=0
-q=[[None for y in range(1) ]for x in range(tries)]
+q=[[None for y in range(1) ]for x in range(5)]
 ans=["_"]*len(word)
 tans=""
 guessedletters=""
@@ -345,6 +345,33 @@ def display(tries):
 			print(" ")
 	else:
 		print(" ")
+def diffwriter(difficulty):
+	with open('difficulty.txt', 'w') as f:
+		f.write(difficulty)
+def trycheck(difficulty):
+	if(difficulty=="EASY"):
+		tries=10
+		diffwriter(difficulty)
+		return tries
+	elif(difficulty=="MEDIUM"):
+		tries=8
+		diffwriter(difficulty)
+		return tries
+	elif(difficulty=="HARD"):
+		tries=6
+		diffwriter(difficulty)
+		return tries
+	elif(difficulty=="EXTREME"):
+		tries=4
+		diffwriter(difficulty)
+		return tries
+	else:
+		difficulty="EASY"
+		tries=4
+		diffwriter(difficulty)
+		return tries
+tries=trycheck(difficulty)
+diffwriter(difficulty)
 def guesscount():
 	return len(ans)
 def blanker(word,guessedletters):
@@ -355,6 +382,33 @@ def blanker(word,guessedletters):
 			print("_",end=' ')
 	print("")
 gussed=guesscount()
+def selector():
+	num=random.randint(0,9)
+	word=""
+	q=[[None for y in range(1) ]for x in range(5)]
+	word=twords[num]
+	word=word.upper()
+	for i in range(5):
+		q[i]=tclues[num][i]
+	return word,q 
+def setgame():
+	global word,tries,mistakes,q,ans,tans,guessedletters,clue,anslen,difficulty,tries,result
+	word="test"
+	word=word.upper()
+	selector()
+	tries=8
+	mistakes=0
+	q=[[None for y in range(1) ]for x in range(tries)]
+	word,q=selector()
+	ans=["_"]*len(word)
+	tans=""
+	guessedletters=""
+	clue=0
+	anslen=len(word)
+	difficulty=diffcheck(difficulty)
+	tries=trycheck(difficulty)
+	diffwriter(difficulty)
+	result=False
 while(menu):
 	#hangman hanging picture
 	os.system("cls")
@@ -365,9 +419,65 @@ while(menu):
 	print("5>EXIT")
 	print("")
 	z=input("enter the option: ")
+	if(int(z)==1):
+		menu=False
+		setgame()
+	elif(int(z)==2):
+		diffoption=True
+		while(diffoption):
+			os.system("cls")
+			print("CURRENT DIFFICULTY: ",difficulty)
+			print("")
+			resp=input("Change Difficulty (y/n): ")
+			if(resp=="y" or resp=="Y" or resp=="yes"):
+				print("1.EASY\n2.MEDIUM\n3.HARD\n4.EXTREME\n5.<-Back")
+				x=input("choose difficulty: ")
+				try:
+					if(int(x)==1):
+						diffoption=False
+						difficulty="EASY"
+					elif(int(x)==2):
+						diffoption=False
+						difficulty="MEDIUM"
+					elif(int(x)==3):
+						diffoption=False
+						difficulty="HARD"
+					elif(int(x)==4):
+						diffoption=False
+						difficulty="EXTREME"
+					else:
+						print("INVALID INPUT")
+						time.sleep(1.5)
+						diffoption=True
+				except:
+					print("INVALID INPUT")
+					time.sleep(1.5)
+					diffoption=True
+			else:
+				diffoption=False
+				menu=True
+	elif(int(z)==3):
+		os.system("cls")
+		print("INSTRUCTIONS")
+		print(instruction)
+		input()
+	elif(int(z)==4):
+		os.system("cls")
+		print("HIGH SCORE")
+		scoreboard()
+		input("")
+	elif(int(z)==5):
+		quit()
+		#os._exit(0)
+	else:
+		print("INVALID INPUT 0")
+		time.sleep(1)
+		menu=True
+	'''
 	try:
 		if(int(z)==1):
 			menu=False
+			setgame()
 		elif(int(z)==2):
 			diffoption=True
 			while(diffoption):
@@ -423,6 +533,8 @@ while(menu):
 		print("INVALID INPUT")
 		time.sleep(1)
 		menu=True
+	'''
+'''
 def diffwriter(difficulty):
 	with open('difficulty.txt', 'w') as f:
 		f.write(difficulty)
@@ -450,22 +562,7 @@ def trycheck(difficulty):
 		return tries
 tries=trycheck(difficulty)
 diffwriter(difficulty)
-def setgame():
-	global word,tries,mistakes,q,ans,tans,guessedletters,clue,anslen,difficulty,tries,result
-	word="test"
-	word=word.upper()
-	tries=8
-	mistakes=0
-	q=[[None for y in range(1) ]for x in range(tries)]
-	ans=["_"]*len(word)
-	tans=""
-	guessedletters=""
-	clue=0
-	anslen=len(word)
-	difficulty=diffcheck(difficulty)
-	tries=trycheck(difficulty)
-	diffwriter(difficulty)
-	result=False
+'''
 while(tries!=0 and menu==False):
 	os.system('cls')
 	if(result):
